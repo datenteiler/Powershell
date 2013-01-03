@@ -14,7 +14,10 @@ Function Edit-Vimrc
 {
     vim $home\_vimrc
 }
+<<<<<<< HEAD
 
 # Load posh-git example profile
 . 'C:\Users\Christian\Documents\WindowsPowerShell\Modules\posh-git\profile.example.ps1'
 
+=======
+>>>>>>> 0b39bdfa303a4ce3806e3d2753404220a61d4c65
