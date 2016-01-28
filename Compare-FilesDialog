@@ -1,0 +1,65 @@
+function Select-FileDialog
+{
+    param
+    (
+        [string]$title,
+        [string]$filter
+    )
+    Add-Type -AssemblyName System.Windows.Forms
+    $file = New-Object System.Windows.Forms.OpenFileDialog #SaveFileDialog
+    $file.Title = $title
+    $file.Filter = $filter
+    $file.FilterIndex = 2
+    $file.RestoreDirectory = $true
+    $show = $file.ShowDialog()
+	
+    if ($show -eq [System.Windows.Forms.DialogResult]::OK)
+    {
+        $file.FileName		
+    }
+}
+
+function Compare-FilesDialog
+{
+    # Add content from the first file
+    $a = Select-FileDialog -title "Select first file..." -filter "All files (*.*)|*.*"
+    $content1 = Get-Content $a
+
+    # Add content from the second file
+    $b = Select-FileDialog -title "Select second file..." -filter "All files (*.*)|*.*"   
+    $content2 = Get-Content $b
+
+    $comparedLines = Compare-Object $content1 $content2 -IncludeEqual | Sort-Object { $_.InputObject.ReadCount } 
+
+    $lineNumber = 0 
+    $comparedLines | foreach { 
+
+    if($_.SideIndicator -eq "==" -or $_.SideIndicator -eq "=>") 
+    { 
+        $lineNumber = $_.InputObject.ReadCount 
+    } 
+
+    if($_.InputObject -match $pattern) 
+    { 
+        if($_.SideIndicator -ne "==") 
+        { 
+            if($_.SideIndicator -eq "=>") 
+            { 
+                $lineOperation = "added" 
+            } 
+            elseif($_.SideIndicator -eq "<=") 
+            { 
+                $lineOperation = "deleted" 
+            } 
+                 
+            [PSCustomObject] @{ 
+                Line = $lineNumber 
+                Operation = $lineOperation 
+                Text = $_.InputObject  
+                } 
+            } 
+        } 
+    }
+}
+
+Compare-FilesDialog
