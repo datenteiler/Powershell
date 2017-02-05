@@ -3,68 +3,79 @@
 
 function Get-PowerShell6ReleaseArtifactFileHash
 {
-    <#
+  <#
       .Synopsis
-       Get SHA256 Hashes of the PowerShell 6 release artifacts
+      Get SHA256 Hashes of the PowerShell 6 release artifacts
       .DESCRIPTION
-       Get the SHA256 Hashes of the PowerShell 6 release artifacts
-       from PowerShell's GitHub release page.
+      Get the SHA256 Hashes of the PowerShell 6 release artifacts
+      from PowerShell's GitHub release page.
       .EXAMPLE
-       Get-PowerShell6ReleaseArtifactFileHash
+      Get-PowerShell6ReleaseArtifactFileHash | Format-Table -AutoSize -Wrap
 
-       Get all PowerShell 6 SHA256 Hashes from GitHub 
+      Show all PowerShell 6 SHA256 Hashes from GitHub 
       .EXAMPLE
-       Get-PowerShell6ReleaseArtifactFileHash -Filename PowerShell_6.0.0-alpha.15-win7-x86.zip
+      Get-PowerShell6ReleaseArtifactFileHash -Filename PowerShell_6.0.0-alpha.15-win7-x86.zip
 
-       Gets SHA256 Hash for a PowerShell 6 release artifact
-       .LINK
-       https://github.com/PowerShell/PowerShell/releases/
-    #>
-    Param
-    (
-        # Filename of the release artifact
-        [Parameter(ValueFromPipeline,
-                   Position=0)]
-        [string]$Filename = $null
-    )
+      Show SHA256 Hash for a PowerShell 6 release artifact
+      .NOTES
+      Christian Imhorst
+      @datenteiler
+      http://www.datenteiler.de
+      github.com/datenteiler
 
-    Begin
-    {
-      # Home of PowerShell 6
-      $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
+      VERSION HISTORY
+        1.0.0.0 | Christian Imhorst
+          Initial version 
+        1.0.0.1 | Christian Imhorst
+          Exchanged ConvertFrom-String with ConvertFrom-StringData,
+          because PowerShell 6 didn't support ConvertFrom-String
+      .LINK
+      https://github.com/PowerShell/PowerShell/releases/
+  #>
+  Param
+  (
+    # Filename of the release artifact
+    [Parameter(ValueFromPipeline,
+    Position=0)]
+    [string]$Filename = $null
+  )
+
+  Begin
+  {
+    # Home of PowerShell 6
+    $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
       
-      # Check if website is available
-      Try
-      {
-        $null = Invoke-WebRequest -Uri $uri | ForEach-Object {$_.StatusCode}
-      }
-      Catch
-      {
-        $_.Exception.Message
-        Break
+    # Check if website is available
+    Try
+    {
+      $null = Invoke-WebRequest -Uri $uri | ForEach-Object {$_.StatusCode}
+    }
+    Catch
+    {
+      $_.Exception.Message
+      Break
+    }
+  }
+  Process
+  {
+    $data = (((Invoke-WebRequest -Uri $uri).AllElements[0].Innertext | ConvertFrom-Json)[0].Body)
+    $string = [regex]::Matches("$data", '[Pp]ower[\w-.]+[-_].*\n.*').value
+    $hash = @{}
+    ForEach ($s in $string){
+      $hash += ConvertFrom-StringData -StringData ($s -replace '\n- ', '=')
+    }   
+  }
+  End
+  {
+    if ($Filename)
+    {
+      $hash.GetEnumerator() | ForEach-Object {
+        if ($Filename -eq $_.name)  {$_.value}
       }
     }
-    Process
+    else  
     {
-      $data = (((Invoke-WebRequest -Uri $uri).AllElements[0].Innertext | ConvertFrom-Json)[0].Body)
-      $string = [regex]::Matches("$data", '[Pp]ower[\w-.]+[-_].*\n.*').value | 
-          ConvertFrom-String -Delimiter '- ' -PropertyNames Filename, Hash
-    }
-    End
-    {
-      if ($Filename)
-      {
-        foreach ($s in $string)
-        {
-         if ($filename.trim() -eq ($s.filename).tostring().trim())
-          {
-            ($s.Hash).tostring().trim()
-          }
-        }
-      }
-      else  
-      {
-        $string
+      $hash
       }
     }
 }
