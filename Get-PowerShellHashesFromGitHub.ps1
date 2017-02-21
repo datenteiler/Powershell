@@ -1,4 +1,3 @@
-#!/usr/bin/env powershell
 #requires -version 5.0
 
 function Get-PowerShellHashesFromGitHub
