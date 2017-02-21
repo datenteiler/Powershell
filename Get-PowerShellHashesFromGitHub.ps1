@@ -77,6 +77,6 @@ function Get-PowerShellHashesFromGitHub
     else  
     {
       $hash
-      }
     }
+  }
 }
