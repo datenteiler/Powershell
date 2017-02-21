@@ -22,12 +22,14 @@ function Get-PowerShellHashesFromGitHub
       http://www.datenteiler.de
       github.com/datenteiler
 
-      VERSION HISTORY
+      .VERSION HISTORY
         1.0.0.0 | Christian Imhorst
           Initial version 
         1.0.0.1 | Christian Imhorst
           Exchanged ConvertFrom-String with ConvertFrom-StringData,
           because PowerShell 6 didn't support ConvertFrom-String
+        1.0.0.2 | Christian Imhorst          
+          Optimized RegEx 
       .LINK
       https://github.com/PowerShell/PowerShell/releases/
   #>
@@ -58,10 +60,10 @@ function Get-PowerShellHashesFromGitHub
   Process
   {
     $data = (((Invoke-WebRequest -Uri $uri).AllElements[0].Innertext | ConvertFrom-Json)[0].Body)
-    $string = [regex]::Matches("$data", '[Pp]ower[\w-.]+[-_].*\n.*').value
+    $string = [regex]::Matches("$data", '(?i)power[\w-.]+[-_].*\n.*').value
     $hash = @{}
     ForEach ($s in $string){
-      $hash += ConvertFrom-StringData -StringData ($s -replace '\n- ', '=')
+      $hash += ConvertFrom-StringData -StringData ($s -replace '\n.- ', '=')
     }   
   }
   End
