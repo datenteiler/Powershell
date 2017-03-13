@@ -1,60 +1,67 @@
-function Get-TableInfo
-{
-    Begin
-    {
-        $sql = $con.CreateCommand()
-        $sql.CommandText = "SELECT * FROM $table"
-    }
-    Process
-    {
-        $adapter = New-Object -TypeName System.Data.SQLite.SQLiteDataAdapter $sql
-        $data = New-Object System.Data.DataSet
-        [void]$adapter.Fill($data)
-        $data.Tables[0] | ft -AutoSize
-    }
-    End
-    {
-        $sql.Dispose()
-    }
-}
 function Read-SqliteDB 
 {
-    [CmdletBinding()]
-    [OutputType([int])]
-    Param
-    (
-        # Set sqlite library path
-        [Parameter(Mandatory=$true,
-                   Position=0)]
-        $librarypath,
+  <#
+      .SYNOPSIS
+      Read-SqliteDB reads table of a sqlite database
 
-        # path to database
-        [Parameter(Mandatory=$true)]
-        $database,
+      .DESCRIPTION
+      Read table of a sqlite database
 
-        # path to database
-        [Parameter(Mandatory=$true)]
-        $table
-    )
-    Begin
-    {
-        Add-Type -Path $librarypath
-        $con = New-Object -TypeName System.Data.SQLite.SQLiteConnection
-        $con.ConnectionString = "Data Source=$database"
-        $con.Open()
-    }
-    Process
-    {
-        Get-TableInfo
-    }
-    End
-    {
-        $con.Close()
-    }
+      .PARAMETER librarypath
+      Path to System.Data.SQLite.dll
+
+      .PARAMETER database
+      Path to the sqlite database
+
+      .PARAMETER table
+      Name of the table 
+
+      .EXAMPLE
+      Read-SqliteDB -librarypath Value -database Value -table Value
+      Read the table of a sqlite database
+
+      .NOTES
+      Place additional notes here.
+
+  #>
+
+
+  [OutputType([int])]
+  Param
+  (
+    # Set sqlite library path
+    [Parameter(Mandatory,HelpMessage='Path to System.Data.SQLite.dll',
+    Position=0)]
+    $librarypath,
+
+    # path to database
+    [Parameter(Mandatory,HelpMessage='Path to database')]
+    $database,
+
+    # name of the table
+    [Parameter(Mandatory,HelpMessage='Name of the table')]
+    $table
+  )
+  Begin
+  {
+    Add-Type -Path $librarypath
+    $con = New-Object -TypeName System.Data.SQLite.SQLiteConnection
+    $con.ConnectionString = ('Data Source={0}' -f $database)
+    $con.Open()
+    $sql = $con.CreateCommand()
+    $sql.CommandText = ('SELECT * FROM {0}' -f $table)
+  }
+  Process
+  {    
+    $adapter = New-Object -TypeName System.Data.SQLite.SQLiteDataAdapter -ArgumentList $sql
+    $data = New-Object -TypeName System.Data.DataSet
+    $null = $adapter.Fill($data)
+    $data.Tables[0] | Select-Object -Property *
+        
+  }
+  End
+  {
+    $sql.Dispose()
+    $con.Close()
+  }
 }
-
-
-$libpath = "C:\Path\To\System.Data.SQLite.dll"
-$mydb = "$env:Home\mydb.sqlite"
-
-Read-SqliteDB -librarypath $libpath -database $mydb -table "sqlite_master"
