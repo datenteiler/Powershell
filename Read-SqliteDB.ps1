@@ -25,7 +25,6 @@ function Read-SqliteDB
 
   #>
 
-
   [OutputType([int])]
   Param
   (
