@@ -1,10 +1,10 @@
 <#
 .Synopsis
-   Use-RadioPlayer -- A small radio player for the shell
+   Use-RadioPlayer -- A small radio player for the PowerShell
 
 .DESCRIPTION
-   Adapt this script to listen to your favorit radio 
-   stations in a PowerShell terminal
+   Adapt this script to listen to your favorit radio stations 
+   in a PowerShell terminal
 
 .EXAMPLE
    Simply run this script an get a simple menu:
