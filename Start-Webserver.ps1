@@ -5,17 +5,17 @@ function Start-Webserver
       Starts or stops the Apache webserver from WSL bash.exe.
 
       .DESCRIPTION
-      You have to install Apache in bash.exe before:
+      First you have to install Apache in bash.exe:
     
-      i. Enable WSL
-      ii. Run installation: lxrun /install
-      iii. Open bash.exe and install LAMP or Apache as root
-      iv. apt install lamp-server^ (or alt.: apt install apache)
-      v. Add this line to the end of /etc/apache2/apache2.conf:
+      1. Enable WSL
+      2. Run installation: lxrun /install
+      3. Open bash.exe and install LAMP or Apache as root
+      4. apt install lamp-server^ (or: apt install apache)
+      5. Add this line to the end of /etc/apache2/apache2.conf:
           
       AcceptFilter http none
 
-      vi. Test if it work:
+      6. Test if it work:
 
       /etc/init.d/apache2 start
       
@@ -33,7 +33,7 @@ function Start-Webserver
       Start Apache webserver.
 
       .EXAMPLE
-      Stop-Webserver -Start 
+      Stop-Webserver -Stop 
       Stop Apache webserver.
 
       .NOTES
@@ -52,15 +52,24 @@ function Start-Webserver
     [switch]
     $Stop
   )
-  if ($Start){[string]$state = 'start'}
-  elseif ($Restart){[string]$state = 'restart'}
-  elseif ($Stop){[string]$state = 'stop'}
+  if ($Start -and !$Restart -and !$Stop){[string]$state = 'start'}
+  elseif ($Restart -and !$Start -and !$Stop){[string]$state = 'restart'}
+  elseif ($Stop -and !$Restart -and !$Start){[string]$state = 'stop'}
   else {
-    Write-Output "Usage: $($MyInvocation.MyCommand.Name) -[Start|Stop|Restart]"
+    Write-Output -InputObject ('Usage: {0} -[Start|Stop|Restart]' -f $MyInvocation.MyCommand.Name)
     break
   } 
-  # (Re)start or stop webserver
-  $cmd = & "$env:windir\system32\bash.exe" @('-c', ('/etc/init.d/apache2 {0}' -f $state))
-  Write-Output ('{0}' -f $cmd[0])
-  Write-Output (' * http://{0}' -f $(hostname))
+  
+  # Path to bash.exe
+  $bash = "$env:windir\system32\bash.exe"
+  
+  # Open hidden bash.exe to keep the webserver running:
+  if ((Get-Process).Name -notcontains 'bash')
+  { 
+    Start-Process -WindowStyle hidden -FilePath $bash
+  }
+  # (Re)start or stop webserver:
+  $cmd = & $bash @('-c', ('/etc/init.d/apache2 {0}' -f $state))
+  Write-Output -InputObject ('{0}' -f $cmd[0])
+  Write-Output -InputObject (' * http://{0}' -f $(& "$env:windir\system32\hostname.exe"))
 }
