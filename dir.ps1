@@ -24,7 +24,6 @@ function dir
         [Parameter(Mandatory=$true, Position=0)]
         [string]$Param='/a'
     )
-    If (Test-Path Alias:dir) {}
     $scriptblock = {cmd /c dir $Param}
     Invoke-Command -Scriptblock $scriptblock
 }
