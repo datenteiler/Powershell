@@ -21,8 +21,8 @@ function dir
 {
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string]$Param='/a'
+        [Parameter(Position=0)]
+        [string]$Param = ''
     )
     $scriptblock = {cmd /c dir $Param}
     Invoke-Command -Scriptblock $scriptblock
