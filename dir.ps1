@@ -3,12 +3,12 @@
   Use the good old dir command in PowerShell
 
   .DESCRIPTION
-  Remove the dir alias to get childitem and 
-  take the old dir command
+  Remove the dir alias to get child-item and 
+  take the old dir command instead
 
   .EXAMPLE
   dir /r
-  Display alternate data streams.
+  Display alternate data streams
 
   .NOTES
   Christian Imhorst 
