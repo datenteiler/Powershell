@@ -11,7 +11,7 @@ How to Compile and start:
 dotnet restore
 dotnet publish -c Release
 ipmo ~/ReadMsgFiles/ReadMsgFile/bin/Release/netstandard2.0/publish/ReadMsgFile.dll
-Read-MsgFile -File /home/christian/sample.msg | Select-Object Subject 
+Read-MsgFile -File sample.msg | Select-Object Subject 
 ```
 
 
