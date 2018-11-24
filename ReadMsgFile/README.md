@@ -16,4 +16,4 @@ Read-MsgFile -File sample.msg
 
 The cmdlet will show the content of the .msg file like sender and receiver, the email body etc. The output are objects, not only text.
 
-The cmdlet is using https://github.com/Sicos1977/MSGReader and 
+The cmdlet is using MSGReader by @Sicos1977 and 
