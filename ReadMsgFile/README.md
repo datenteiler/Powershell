@@ -10,8 +10,8 @@ How to compile and start:
 ```
 dotnet restore
 dotnet publish -c Release
-ipmo ~/ReadMsgFiles/ReadMsgFile/bin/Release/netstandard2.0/publish/ReadMsgFile.dll
-Read-MsgFile -File sample.msg | Select-Object Subject 
+ipmo bin/Release/netstandard2.0/publish/ReadMsgFile.dll
+Read-MsgFile -File sample.msg 
 ```
 
 
