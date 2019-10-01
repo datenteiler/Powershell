@@ -1,0 +1,15 @@
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+
+public static class libc
+{
+    [DllImport("libc")]
+    public static extern int read(int handle, byte[] buf, int n);
+}
+'@
+$buffer = New-Object byte[] 100
+'Input Value: '
+[libc]::read(0, $buffer, 100)
+'Input value is: {0}' -f $([System.Text.Encoding]::UTF8).GetString($buffer)
