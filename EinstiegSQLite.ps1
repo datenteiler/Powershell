@@ -1,6 +1,6 @@
 Add-Type -Path System.Data.SQLite.dll
 $conn = New-Object -TypeName System.Data.SQLite.SQLiteConnection
-$conn.ConnectionString = "data source=/home/christian/PowerShell/Geburtstage.sqlite" 
+$conn.ConnectionString = "data source=Geburtstage.sqlite" 
 $conn.Open()
 $sqlcmd = $conn.CreateCommand()
 $sqlcmd.CommandText = @'
