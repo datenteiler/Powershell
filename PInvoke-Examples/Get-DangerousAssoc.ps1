@@ -11,10 +11,6 @@ function Get-DangerousAssoc
     .EXAMPLE
     Get-DangerousAssoc -extension txt
     Check if a file extension like txt or exe is dangerous
-
-    .NOTES
-    Place additional notes here.
-
   #>
 
   [CmdletBinding()]
