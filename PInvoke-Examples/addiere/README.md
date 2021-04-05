@@ -30,6 +30,9 @@ $type = Add-Type -MemberDefinition $signature -Name Win32Addiere -PassThru
 $type::addiere(23,27)
 ```
 
+Sollte statt einem Ergebnis die Fehlermeldung ```"Es wurde versucht, eine Datei mit einem falschen Format 
+zu laden. (Ausnahme von HRESULT: 0x8007000B)" BadImageFormatException``` ausgeworfen werden, dann versucht man die 64-bit DLL in einer 32-bit PowerShell zu öffnen (oder umgekehrt), was nicht funktioniert.
+
 Mit dem Programm ```link.exe``` kann man auch gucken, wie es in der DLL aussieht:
 
 ```
