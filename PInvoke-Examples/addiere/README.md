@@ -29,3 +29,24 @@ public static extern int addiere(
 $type = Add-Type -MemberDefinition $signature -Name Win32Addiere -PassThru 
 $type::addiere(23,27)
 ```
+
+Mit dem Programm ```link.exe``` kann man auch gucken, wie es in der DLL aussieht:
+
+```
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\Hostx64\x64\link.exe" /dump /exports addiere.dll
+[...]
+Dump of file addiere.dll
+
+File Type: DLL
+
+  Section contains the following exports for addiere.dll
+
+[...]
+
+    ordinal hint RVA      name
+
+          1    0 00001000 addiere
+```
+
+Damit bekommt man allerdings nicht heraus, welche Parameter die Funktion erwartet. Das muss man wissen oder in der entsprechenden Windows-API-Referenz
+(wenn es sich um eine Microsoft Windows DLL handelt) herausfinden.
