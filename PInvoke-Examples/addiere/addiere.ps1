@@ -6,5 +6,6 @@ public static extern int addiere(
           );
 '@ 
 
-$type = Add-Type -MemberDefinition $signature -Name Win32Addiere -PassThru 
-$type::addiere(23, 27)
+$type = Add-Type -MemberDefinition $signature -Name Addiere -namespace Win32 -PassThru
+$type::addiere(3,2)
+[Win32.Addiere]::addiere(2,5)
