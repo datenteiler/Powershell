@@ -1,0 +1,12 @@
+Get-ChildItem | ForEach-Object {
+    $ACE = (Get-ACL -Path $_.FullName).Access | Where-Object {$_.IsInherited -eq $false}
+    if ($ACE) {
+        $myACE = [PSCustomObject]@{
+            Name = $_.Name
+            FileSystemRights = $ACE.FileSystemRights
+            AccessControlType = $ACE.AccessControlType
+            IdentityReference = $ACE.IdentityReference
+            }
+        $myACE 
+        }
+} | Out-GridView -Title 'Ohne Vererbung'
